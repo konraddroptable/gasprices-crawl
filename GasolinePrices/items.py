@@ -15,5 +15,6 @@ class GasolinePricesItem(scrapy.Item):
     address = scrapy.Field()
     city = scrapy.Field()
     price = scrapy.Field()
+    updated = scrapy.Field()
     gasType = scrapy.Field()
     timestamp = scrapy.Field()

@@ -26,6 +26,7 @@ class GasolineSpider(scrapy.Spider):
             item["address"] = self.parseText(response.xpath(self.mergePath("//table[@id='priserna']/tr[",i,"]/td[@class='texttab']//a/text()")).extract()[0])
             item["city"] = self.parseText(response.xpath(self.mergePath("//table[@id='priserna']/tr[",i,"]/td[@class='texttab'][4]/text()")).extract()[0])
             item["price"] = self.getPrice(response.xpath(self.mergePath("//table[@id='priserna']/tr[",i,"]/td//span[@class='c2a']/text()")).extract()[0])
+            item["updated"] = self.getUpdateDate(response.xpath(self.mergePath("//table[@id='priserna']/tr[",i,"]/td//span[@class='c2a']/text()")).extract()[0])
             item["gasType"] = self.parseText(gas)
             item["timestamp"] = datetime.datetime.now().strftime('%Y-%m-%d %H:00')
             yield item
@@ -34,6 +35,16 @@ class GasolineSpider(scrapy.Spider):
         s = re.findall(r'[0-9]\,[0-9]{1,2}', x)
         if len(s) > 0:
             return s[0]
+        else:
+            return 'NA'
+    
+    def getUpdateDate(self, x):
+        s = re.findall(r'\([0-9]{1,2}\/[0-9]{1,2}\)', x)
+        if len(s) > 0:
+            d = int(re.sub(u'\(', '', re.findall('\([0-9]{1,2}', s[0])[0]))
+            m = int(re.sub(u'\)', '', re.findall('[0-9]{1,2}\)', s[0])[0]))
+            y = datetime.date.today().year
+            return datetime.date(y, m, d)
         else:
             return 'NA'
     
